@@ -1,0 +1,1156 @@
+openapi: 3.1.0
+info:
+  # Do not change the title, if the title changes, the import paths will be broken
+  title: Api
+  version: 0.1.0
+  description: BookBridge – Student Book Exchange Platform API
+servers:
+  - url: /api
+    description: Base API path
+tags:
+  - name: health
+    description: Health operations
+  - name: auth
+    description: Authentication and session management
+  - name: books
+    description: Book listing operations
+  - name: categories
+    description: Book categories
+  - name: wishlist
+    description: Wishlist management
+  - name: exchanges
+    description: Book exchange requests
+  - name: dashboard
+    description: Student dashboard
+  - name: admin
+    description: Admin operations
+  - name: contact
+    description: Contact form
+
+paths:
+  /healthz:
+    get:
+      operationId: healthCheck
+      tags: [health]
+      summary: Health check
+      responses:
+        "200":
+          description: Healthy
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HealthStatus"
+
+  # Auth
+  /auth/register:
+    post:
+      operationId: register
+      tags: [auth]
+      summary: Register a new student
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RegisterInput"
+      responses:
+        "201":
+          description: Registered
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthResponse"
+        "400":
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /auth/login:
+    post:
+      operationId: login
+      tags: [auth]
+      summary: Login
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LoginInput"
+      responses:
+        "200":
+          description: Logged in
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthResponse"
+        "401":
+          description: Invalid credentials
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /auth/logout:
+    post:
+      operationId: logout
+      tags: [auth]
+      summary: Logout
+      responses:
+        "200":
+          description: Logged out
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
+
+  /auth/me:
+    get:
+      operationId: getMe
+      tags: [auth]
+      summary: Get current user profile
+      responses:
+        "200":
+          description: Current user
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+        "401":
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  # Books
+  /books:
+    get:
+      operationId: listBooks
+      tags: [books]
+      summary: List books with optional filters
+      parameters:
+        - name: search
+          in: query
+          schema:
+            type: string
+        - name: category
+          in: query
+          schema:
+            type: string
+        - name: department
+          in: query
+          schema:
+            type: string
+        - name: semester
+          in: query
+          schema:
+            type: string
+        - name: condition
+          in: query
+          schema:
+            type: string
+        - name: minPrice
+          in: query
+          schema:
+            type: number
+        - name: maxPrice
+          in: query
+          schema:
+            type: number
+        - name: listingType
+          in: query
+          schema:
+            type: string
+        - name: page
+          in: query
+          schema:
+            type: integer
+        - name: limit
+          in: query
+          schema:
+            type: integer
+        - name: sort
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: List of books
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BookListResponse"
+
+    post:
+      operationId: createBook
+      tags: [books]
+      summary: Create a new book listing
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/BookInput"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Book"
+
+  /books/featured:
+    get:
+      operationId: getFeaturedBooks
+      tags: [books]
+      summary: Get featured books for homepage
+      responses:
+        "200":
+          description: Featured books
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Book"
+
+  /books/popular:
+    get:
+      operationId: getPopularBooks
+      tags: [books]
+      summary: Get popular books
+      responses:
+        "200":
+          description: Popular books
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Book"
+
+  /books/my-listings:
+    get:
+      operationId: getMyListings
+      tags: [books]
+      summary: Get books listed by the current user
+      responses:
+        "200":
+          description: My listings
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Book"
+
+  /books/{id}:
+    get:
+      operationId: getBook
+      tags: [books]
+      summary: Get a book by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Book details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BookDetail"
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+    patch:
+      operationId: updateBook
+      tags: [books]
+      summary: Update a book listing
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/BookUpdate"
+      responses:
+        "200":
+          description: Updated book
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Book"
+
+    delete:
+      operationId: deleteBook
+      tags: [books]
+      summary: Delete a book listing
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Deleted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
+
+  # Categories
+  /categories:
+    get:
+      operationId: listCategories
+      tags: [categories]
+      summary: List all categories
+      responses:
+        "200":
+          description: Categories
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Category"
+
+  /categories/{id}:
+    get:
+      operationId: getCategory
+      tags: [categories]
+      summary: Get a category by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Category
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Category"
+
+  # Wishlist
+  /wishlist:
+    get:
+      operationId: getWishlist
+      tags: [wishlist]
+      summary: Get the current user's wishlist
+      responses:
+        "200":
+          description: Wishlist items
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/WishlistItem"
+
+    post:
+      operationId: addToWishlist
+      tags: [wishlist]
+      summary: Add a book to wishlist
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/WishlistInput"
+      responses:
+        "201":
+          description: Added to wishlist
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/WishlistItem"
+
+  /wishlist/{bookId}:
+    delete:
+      operationId: removeFromWishlist
+      tags: [wishlist]
+      summary: Remove a book from wishlist
+      parameters:
+        - name: bookId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Removed
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
+
+  # Exchange Requests
+  /exchanges:
+    get:
+      operationId: listExchanges
+      tags: [exchanges]
+      summary: List exchange requests for the current user
+      parameters:
+        - name: status
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Exchange requests
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ExchangeRequest"
+
+    post:
+      operationId: createExchange
+      tags: [exchanges]
+      summary: Send an exchange request
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ExchangeInput"
+      responses:
+        "201":
+          description: Created exchange request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ExchangeRequest"
+
+  /exchanges/{id}:
+    patch:
+      operationId: updateExchange
+      tags: [exchanges]
+      summary: Accept, reject, or complete an exchange request
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ExchangeUpdate"
+      responses:
+        "200":
+          description: Updated exchange request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ExchangeRequest"
+
+  # Student Dashboard
+  /dashboard/stats:
+    get:
+      operationId: getDashboardStats
+      tags: [dashboard]
+      summary: Get student dashboard statistics
+      responses:
+        "200":
+          description: Dashboard stats
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DashboardStats"
+
+  /dashboard/recent-views:
+    get:
+      operationId: getRecentViews
+      tags: [dashboard]
+      summary: Get recently viewed books
+      responses:
+        "200":
+          description: Recently viewed books
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Book"
+
+  /dashboard/recommended:
+    get:
+      operationId: getRecommendedBooks
+      tags: [dashboard]
+      summary: Get recommended books
+      responses:
+        "200":
+          description: Recommended books
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Book"
+
+  # Admin
+  /admin/stats:
+    get:
+      operationId: getAdminStats
+      tags: [admin]
+      summary: Get admin dashboard statistics
+      responses:
+        "200":
+          description: Admin stats
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AdminStats"
+
+  /admin/users:
+    get:
+      operationId: listUsers
+      tags: [admin]
+      summary: List all users (admin)
+      parameters:
+        - name: search
+          in: query
+          schema:
+            type: string
+        - name: page
+          in: query
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Users list
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserListResponse"
+
+  /admin/users/{id}:
+    patch:
+      operationId: updateUser
+      tags: [admin]
+      summary: Update user (admin)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UserUpdate"
+      responses:
+        "200":
+          description: Updated user
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+
+    delete:
+      operationId: deleteUser
+      tags: [admin]
+      summary: Delete user (admin)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Deleted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
+
+  /admin/books:
+    get:
+      operationId: listAllBooks
+      tags: [admin]
+      summary: List all books with admin details
+      parameters:
+        - name: page
+          in: query
+          schema:
+            type: integer
+        - name: search
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: All books
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BookListResponse"
+
+  /admin/categories:
+    post:
+      operationId: createCategory
+      tags: [admin]
+      summary: Create a category (admin)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CategoryInput"
+      responses:
+        "201":
+          description: Created category
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Category"
+
+  /admin/categories/{id}:
+    delete:
+      operationId: deleteCategory
+      tags: [admin]
+      summary: Delete a category (admin)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Deleted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
+
+  /admin/analytics:
+    get:
+      operationId: getAnalytics
+      tags: [admin]
+      summary: Get analytics data for charts
+      responses:
+        "200":
+          description: Analytics data
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AnalyticsData"
+
+  # Contact
+  /contact:
+    post:
+      operationId: sendContact
+      tags: [contact]
+      summary: Send a contact message
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ContactInput"
+      responses:
+        "200":
+          description: Message sent
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
+
+components:
+  schemas:
+    HealthStatus:
+      type: object
+      properties:
+        status:
+          type: string
+      required:
+        - status
+
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: string
+      required:
+        - error
+
+    SuccessResponse:
+      type: object
+      properties:
+        message:
+          type: string
+      required:
+        - message
+
+    # Auth
+    RegisterInput:
+      type: object
+      required: [name, email, password, phone, department, semester, college]
+      properties:
+        name:
+          type: string
+        email:
+          type: string
+        password:
+          type: string
+        phone:
+          type: string
+        department:
+          type: string
+        semester:
+          type: string
+        college:
+          type: string
+        profilePicture:
+          type: ["string", "null"]
+
+    LoginInput:
+      type: object
+      required: [email, password]
+      properties:
+        email:
+          type: string
+        password:
+          type: string
+
+    AuthResponse:
+      type: object
+      required: [user, token]
+      properties:
+        user:
+          $ref: "#/components/schemas/User"
+        token:
+          type: string
+
+    User:
+      type: object
+      required: [id, name, email, role, department, semester, college, createdAt]
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        email:
+          type: string
+        phone:
+          type: ["string", "null"]
+        role:
+          type: string
+          enum: [student, admin]
+        department:
+          type: string
+        semester:
+          type: string
+        college:
+          type: string
+        profilePicture:
+          type: ["string", "null"]
+        isActive:
+          type: boolean
+        createdAt:
+          type: string
+
+    UserUpdate:
+      type: object
+      properties:
+        name:
+          type: string
+        isActive:
+          type: boolean
+        role:
+          type: string
+
+    UserListResponse:
+      type: object
+      required: [users, total, page, totalPages]
+      properties:
+        users:
+          type: array
+          items:
+            $ref: "#/components/schemas/User"
+        total:
+          type: integer
+        page:
+          type: integer
+        totalPages:
+          type: integer
+
+    # Books
+    Book:
+      type: object
+      required: [id, title, author, publisher, category, department, semester, condition, price, listingType, isAvailable, sellerId, sellerName, createdAt]
+      properties:
+        id:
+          type: integer
+        title:
+          type: string
+        author:
+          type: string
+        publisher:
+          type: string
+        category:
+          type: string
+        department:
+          type: string
+        semester:
+          type: string
+        condition:
+          type: string
+        price:
+          type: number
+        listingType:
+          type: string
+          enum: [sell, exchange, donate]
+        description:
+          type: ["string", "null"]
+        imageUrl:
+          type: ["string", "null"]
+        isAvailable:
+          type: boolean
+        sellerId:
+          type: integer
+        sellerName:
+          type: string
+        viewCount:
+          type: integer
+        wishlistCount:
+          type: integer
+        createdAt:
+          type: string
+
+    BookDetail:
+      type: object
+      required: [id, title, author, publisher, category, department, semester, condition, price, listingType, isAvailable, sellerId, sellerName, sellerEmail, sellerPhone, sellerCollege, createdAt]
+      properties:
+        id:
+          type: integer
+        title:
+          type: string
+        author:
+          type: string
+        publisher:
+          type: string
+        category:
+          type: string
+        department:
+          type: string
+        semester:
+          type: string
+        condition:
+          type: string
+        price:
+          type: number
+        listingType:
+          type: string
+        description:
+          type: ["string", "null"]
+        imageUrl:
+          type: ["string", "null"]
+        isAvailable:
+          type: boolean
+        sellerId:
+          type: integer
+        sellerName:
+          type: string
+        sellerEmail:
+          type: string
+        sellerPhone:
+          type: ["string", "null"]
+        sellerCollege:
+          type: string
+        viewCount:
+          type: integer
+        wishlistCount:
+          type: integer
+        isInWishlist:
+          type: boolean
+        createdAt:
+          type: string
+
+    BookInput:
+      type: object
+      required: [title, author, publisher, category, department, semester, condition, price, listingType]
+      properties:
+        title:
+          type: string
+        author:
+          type: string
+        publisher:
+          type: string
+        category:
+          type: string
+        department:
+          type: string
+        semester:
+          type: string
+        condition:
+          type: string
+          enum: [new, like-new, good, fair, poor]
+        price:
+          type: number
+        listingType:
+          type: string
+          enum: [sell, exchange, donate]
+        description:
+          type: string
+        imageUrl:
+          type: string
+
+    BookUpdate:
+      type: object
+      properties:
+        title:
+          type: string
+        author:
+          type: string
+        publisher:
+          type: string
+        category:
+          type: string
+        department:
+          type: string
+        semester:
+          type: string
+        condition:
+          type: string
+        price:
+          type: number
+        listingType:
+          type: string
+        description:
+          type: string
+        imageUrl:
+          type: string
+        isAvailable:
+          type: boolean
+
+    BookListResponse:
+      type: object
+      required: [books, total, page, totalPages]
+      properties:
+        books:
+          type: array
+          items:
+            $ref: "#/components/schemas/Book"
+        total:
+          type: integer
+        page:
+          type: integer
+        totalPages:
+          type: integer
+
+    # Categories
+    Category:
+      type: object
+      required: [id, name, icon, bookCount]
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        icon:
+          type: string
+        bookCount:
+          type: integer
+
+    CategoryInput:
+      type: object
+      required: [name, icon]
+      properties:
+        name:
+          type: string
+        icon:
+          type: string
+
+    # Wishlist
+    WishlistItem:
+      type: object
+      required: [id, bookId, userId, book, addedAt]
+      properties:
+        id:
+          type: integer
+        bookId:
+          type: integer
+        userId:
+          type: integer
+        book:
+          $ref: "#/components/schemas/Book"
+        addedAt:
+          type: string
+
+    WishlistInput:
+      type: object
+      required: [bookId]
+      properties:
+        bookId:
+          type: integer
+
+    # Exchanges
+    ExchangeRequest:
+      type: object
+      required: [id, bookId, requesterId, ownerId, status, createdAt]
+      properties:
+        id:
+          type: integer
+        bookId:
+          type: integer
+        requesterId:
+          type: integer
+        ownerId:
+          type: integer
+        status:
+          type: string
+          enum: [pending, accepted, rejected, completed]
+        message:
+          type: ["string", "null"]
+        book:
+          $ref: "#/components/schemas/Book"
+        requesterName:
+          type: string
+        requesterEmail:
+          type: string
+        ownerName:
+          type: string
+        createdAt:
+          type: string
+        updatedAt:
+          type: string
+
+    ExchangeInput:
+      type: object
+      required: [bookId]
+      properties:
+        bookId:
+          type: integer
+        message:
+          type: string
+
+    ExchangeUpdate:
+      type: object
+      required: [status]
+      properties:
+        status:
+          type: string
+          enum: [accepted, rejected, completed]
+
+    # Dashboard
+    DashboardStats:
+      type: object
+      required: [totalListings, wishlistCount, pendingRequests, completedExchanges]
+      properties:
+        totalListings:
+          type: integer
+        wishlistCount:
+          type: integer
+        pendingRequests:
+          type: integer
+        completedExchanges:
+          type: integer
+
+    # Admin
+    AdminStats:
+      type: object
+      required: [totalUsers, totalBooks, totalExchanges, totalCategories, recentActivity]
+      properties:
+        totalUsers:
+          type: integer
+        totalBooks:
+          type: integer
+        totalExchanges:
+          type: integer
+        totalCategories:
+          type: integer
+        newUsersThisMonth:
+          type: integer
+        newBooksThisMonth:
+          type: integer
+        recentActivity:
+          type: array
+          items:
+            $ref: "#/components/schemas/ActivityItem"
+
+    ActivityItem:
+      type: object
+      required: [id, type, description, createdAt]
+      properties:
+        id:
+          type: integer
+        type:
+          type: string
+        description:
+          type: string
+        createdAt:
+          type: string
+
+    AnalyticsData:
+      type: object
+      required: [booksByCategory, booksByCondition, exchangesByMonth, userGrowth, listingsByType]
+      properties:
+        booksByCategory:
+          type: array
+          items:
+            $ref: "#/components/schemas/ChartDataPoint"
+        booksByCondition:
+          type: array
+          items:
+            $ref: "#/components/schemas/ChartDataPoint"
+        exchangesByMonth:
+          type: array
+          items:
+            $ref: "#/components/schemas/ChartDataPoint"
+        userGrowth:
+          type: array
+          items:
+            $ref: "#/components/schemas/ChartDataPoint"
+        listingsByType:
+          type: array
+          items:
+            $ref: "#/components/schemas/ChartDataPoint"
+
+    ChartDataPoint:
+      type: object
+      required: [label, value]
+      properties:
+        label:
+          type: string
+        value:
+          type: number
+
+    # Contact
+    ContactInput:
+      type: object
+      required: [name, email, subject, message]
+      properties:
+        name:
+          type: string
+        email:
+          type: string
+        subject:
+          type: string
+        message:
+          type: string
