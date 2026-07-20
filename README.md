@@ -71,9 +71,10 @@ _Populate as you build — explicit user instructions worth remembering across s
 <img width="908" height="377" alt="Screenshot 2026-07-20 071725" src="https://github.com/user-attachments/assets/813e1425-a15a-4b37-a8dd-dd3a6780794a" />
 <img width="898" height="479" alt="Screenshot 2026-07-20 071714" src="https://github.com/user-attachments/assets/21574365-3ccc-49d8-9b7f-438c0fd2ce3c" />
 <img width="908" height="476" alt="Screenshot 2026-07-20 071801" src="https://github.com/user-attachments/assets/b29469b9-82ea-435e-b58e-91afeff49537" />
-<img width="909" height="475" alt="Screenshot 2026-07-20 071742" src="https://github.com/user-attachments/assets/c2492112-a93c-4048-9f2b-c664bf417ae0" />
+<img width="875" height="459" alt="Screenshot 2026-07-20 072350" src="https://github.com/user-attachments/assets/3a230865-8372-4c5a-9c55-e4136bc5cfeb" />
 <img width="893" height="475" alt="Screenshot 2026-07-20 071809" src="https://github.com/user-attachments/assets/e15c553b-50b1-4971-9e2d-9e16f65f7611" />
-<img width="908" height="479" alt="Screenshot 2026-07-20 071821" src="https://github.com/user-attachments/assets/434f943b-435d-4a1c-8caa-7ff798dde5a2" />
+<img width="874" height="469" alt="Screenshot 2026-07-20 072256" src="https://github.com/user-attachments/assets/25bab931-a906-4631-aed6-967cf19ec877" />
+
 
 
 
