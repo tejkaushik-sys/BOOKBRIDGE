@@ -63,3 +63,18 @@ _Populate as you build — explicit user instructions worth remembering across s
 - Demo passwords are `secret` (bcrypt hash pre-seeded)
 - After schema changes: run `pnpm --filter @workspace/db run push` then rebuild api-server
 - After OpenAPI spec changes: run codegen before touching frontend
+## DEMO
+<img width="917" height="477" alt="Screenshot 2026-07-20 071609" src="https://github.com/user-attachments/assets/637d8a93-6097-4d91-bc2d-8b0d8e289bb1" />
+<img width="910" height="475" alt="Screenshot 2026-07-20 071625" src="https://github.com/user-attachments/assets/c2eaa845-ba4f-4939-a4e6-48a82ab1c1c7" />
+<img width="916" height="430" alt="Screenshot 2026-07-20 071640" src="https://github.com/user-attachments/assets/92e78b68-eb82-45d0-83cd-be19e738eeb6" />
+<img width="898" height="472" alt="Screenshot 2026-07-20 071654" src="https://github.com/user-attachments/assets/f749bf5f-9e13-4945-b390-69022b232e57" />
+<img width="908" height="377" alt="Screenshot 2026-07-20 071725" src="https://github.com/user-attachments/assets/813e1425-a15a-4b37-a8dd-dd3a6780794a" />
+<img width="898" height="479" alt="Screenshot 2026-07-20 071714" src="https://github.com/user-attachments/assets/21574365-3ccc-49d8-9b7f-438c0fd2ce3c" />
+<img width="908" height="476" alt="Screenshot 2026-07-20 071801" src="https://github.com/user-attachments/assets/b29469b9-82ea-435e-b58e-91afeff49537" />
+<img width="909" height="475" alt="Screenshot 2026-07-20 071742" src="https://github.com/user-attachments/assets/c2492112-a93c-4048-9f2b-c664bf417ae0" />
+<img width="893" height="475" alt="Screenshot 2026-07-20 071809" src="https://github.com/user-attachments/assets/e15c553b-50b1-4971-9e2d-9e16f65f7611" />
+<img width="908" height="479" alt="Screenshot 2026-07-20 071821" src="https://github.com/user-attachments/assets/434f943b-435d-4a1c-8caa-7ff798dde5a2" />
+
+
+
+
